@@ -1,4 +1,4 @@
-module github.com/pzaeemfar/oip2co
+module github.com/ogpourya/oip2co
 
 go 1.21
 
