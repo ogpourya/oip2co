@@ -11,7 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/pzaeemfar/oip2co/geoip"
+	"github.com/ogpourya/oip2co/geoip"
 )
 
 func parseInput(input string) string {

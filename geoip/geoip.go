@@ -11,7 +11,7 @@ import (
 	ip2location "github.com/ip2location/ip2location-go/v9"
 )
 
-const dbURL = "https://github.com/pzaeemfar/oip2co/raw/refs/heads/main/database/database.BIN"
+const dbURL = "https://github.com/ogpourya/oip2co/raw/refs/heads/main/database/database.BIN"
 const dbFileName = "database-1704f38bf0b916536afc7712c14da229.BIN"
 
 func getDatabasePath() (string, error) {
