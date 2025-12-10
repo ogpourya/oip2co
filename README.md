@@ -33,12 +33,15 @@ oip2co 8.8.8.8 http://1.1.1.1:80
 oip2co -json 8.8.8.8
 
 oip2co -debug -json 8.8.8.8
+
+oip2co -country IR,US 8.8.8.8
 ```
 
 ## Options
 
-* `-json`  : Output results in JSON format
-* `-debug` : Enable debug output (default is silent mode)
+* `-json`    : Output results in JSON format
+* `-debug`   : Enable debug output (default is silent mode)
+* `-country` : Filter output by country code (comma separated, e.g. IR,DE)
 
 ## Notes
 

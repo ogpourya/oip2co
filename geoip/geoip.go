@@ -15,8 +15,15 @@ const dbURL = "https://github.com/ogpourya/oip2co/raw/refs/heads/main/database/d
 const dbFileName = "database-1704f38bf0b916536afc7712c14da229.BIN"
 
 func getDatabasePath() (string, error) {
-	tmpDir := os.TempDir()
-	dbPath := filepath.Join(tmpDir, dbFileName)
+	cacheDir, err := os.UserCacheDir()
+	if err != nil {
+		return "", fmt.Errorf("failed to get user cache directory: %w", err)
+	}
+	appDir := filepath.Join(cacheDir, "oip2co")
+	if err := os.MkdirAll(appDir, 0755); err != nil {
+		return "", fmt.Errorf("failed to create application directory: %w", err)
+	}
+	dbPath := filepath.Join(appDir, dbFileName)
 
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 		if err := downloadFile(dbURL, dbPath); err != nil {
