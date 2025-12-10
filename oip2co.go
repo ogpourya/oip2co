@@ -31,7 +31,15 @@ func parseInput(input string) string {
 func main() {
 	debug := flag.Bool("debug", false, "Enable debug output")
 	jsonOut := flag.Bool("json", false, "Output results as JSON")
+	filterArg := flag.String("country", "", "Comma-separated list of country codes to filter (e.g. IR,US)")
 	flag.Parse()
+
+	allowedCountries := make(map[string]bool)
+	if *filterArg != "" {
+		for _, c := range strings.Split(*filterArg, ",") {
+			allowedCountries[strings.ToUpper(strings.TrimSpace(c))] = true
+		}
+	}
 
 	stat, _ := os.Stdin.Stat()
 	var inputs []string
@@ -79,6 +87,10 @@ func main() {
 				mu.Lock()
 				results[input] = fmt.Sprintf("Lookup failed: %v", err)
 				mu.Unlock()
+				continue
+			}
+
+			if len(allowedCountries) > 0 && !allowedCountries[country] {
 				continue
 			}
 
