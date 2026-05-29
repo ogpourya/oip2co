@@ -1,50 +1,39 @@
 # oip2co
-
 A simple command-line tool that converts IP addresses to country codes. It uses the **IP2Location LITE IP Geolocation Database** for accurate IP-to-country lookups.
-
 > **Important**
 >
 > IPv6 addresses and domain names are not supported. Any such inputs will be skipped and ignored.
-
 ## Features
-
 * Fast IP-to-country lookups
 * Reads IPs from stdin or command-line arguments
 * Clean, simple output format
 * Automatic database download
 * Optional JSON output with `-json` flag
+* Filter results by country with `-country` flag
+* Output matching IPs only with `-ips-only` flag
 * Silent mode by default, use `-debug` for detailed logs
-
 ## Installation
-
 ```bash
 GOPROXY=direct go install github.com/ogpourya/oip2co@latest
 ```
-
 ## Usage (Examples)
-
 ```bash
 cat proxies.txt | oip2co
-
 echo "192.168.1.1" | oip2co
-
 oip2co 8.8.8.8 http://1.1.1.1:80
-
 oip2co -json 8.8.8.8
-
 oip2co -debug -json 8.8.8.8
-
 oip2co -country IR,US 8.8.8.8
+oip2co -country IR -ips-only 8.8.8.8
+cat ips.txt | oip2co -country US -ips-only
 ```
-
 ## Options
-
-* `-json`    : Output results in JSON format
-* `-debug`   : Enable debug output (default is silent mode)
-* `-country` : Filter output by country code (comma separated, e.g. IR,DE)
-
+* `-json`      : Output results in JSON format
+* `-debug`     : Enable debug output (default is silent mode)
+* `-country`   : Filter output by country code (comma separated, e.g. IR,DE)
+* `-ips-only`  : Output matching IPs only, without country labels (requires `-country`)
 ## Notes
-
 * Invalid IP addresses are skipped with optional debug info
 * Private and unrecognized IP ranges return "Unknown" as country code
 * If stdin is empty, IPs from CLI arguments are used
+* `-ips-only` is useful for piping filtered results into other tools

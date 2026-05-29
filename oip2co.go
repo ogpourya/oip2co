@@ -10,7 +10,6 @@ import (
 	"os"
 	"strings"
 	"sync"
-
 	"github.com/ogpourya/oip2co/geoip"
 )
 
@@ -29,9 +28,10 @@ func parseInput(input string) string {
 }
 
 func main() {
-	debug := flag.Bool("debug", false, "Enable debug output")
-	jsonOut := flag.Bool("json", false, "Output results as JSON")
+	debug    := flag.Bool("debug",    false, "Enable debug output")
+	jsonOut  := flag.Bool("json",     false, "Output results as JSON")
 	filterArg := flag.String("country", "", "Comma-separated list of country codes to filter (e.g. IR,US)")
+	ipsOnly  := flag.Bool("ips-only", false, "Output matching IPs only, no country label (requires --country)")
 	flag.Parse()
 
 	allowedCountries := make(map[string]bool)
@@ -39,6 +39,11 @@ func main() {
 		for _, c := range strings.Split(*filterArg, ",") {
 			allowedCountries[strings.ToUpper(strings.TrimSpace(c))] = true
 		}
+	}
+
+	if *ipsOnly && len(allowedCountries) == 0 {
+		fmt.Fprintln(os.Stderr, "Error: --ips-only requires --country to be set")
+		os.Exit(1)
 	}
 
 	stat, _ := os.Stdin.Stat()
@@ -61,7 +66,6 @@ func main() {
 
 	results := make(map[string]string)
 	var mu sync.Mutex
-
 	inputCh := make(chan string)
 	var wg sync.WaitGroup
 	workerCount := 50
@@ -70,7 +74,6 @@ func main() {
 		defer wg.Done()
 		for input := range inputCh {
 			host := parseInput(input)
-
 			ip := net.ParseIP(host)
 			if ip == nil {
 				if *debug {
@@ -99,7 +102,11 @@ func main() {
 			mu.Unlock()
 
 			if !*jsonOut {
-				fmt.Printf("%s - %s\n", input, country)
+				if *ipsOnly {
+					fmt.Println(input)
+				} else {
+					fmt.Printf("%s - %s\n", input, country)
+				}
 			}
 		}
 	}
@@ -113,7 +120,6 @@ func main() {
 		inputCh <- input
 	}
 	close(inputCh)
-
 	wg.Wait()
 
 	if *jsonOut {
